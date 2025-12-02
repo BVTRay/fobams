@@ -13,7 +13,8 @@ import {
   Bell,
   Search,
   Film,
-  Menu
+  Menu,
+  Smartphone
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -52,6 +53,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, darkMode, toggleDarkMo
     { name: '工作台', path: '/', icon: <LayoutDashboard size={20} /> },
     { name: '硬件资产', path: '/hardware', icon: <Camera size={20} /> },
     { name: '借还管理', path: '/check-in-out', icon: <ArrowLeftRight size={20} /> },
+    { name: '通讯设备', path: '/mobile', icon: <Smartphone size={20} /> },
     { name: '媒资索引', path: '/media', icon: <Database size={20} /> },
     { name: '成片管理', path: '/master-works', icon: <Film size={20} /> }, 
     { name: '账号保险箱', path: '/accounts', icon: <Shield size={20} /> },
@@ -62,15 +64,15 @@ export const Layout: React.FC<LayoutProps> = ({ children, darkMode, toggleDarkMo
   return (
     <LayoutContext.Provider value={{ isCollapsed, setCollapsed }}>
       <div className={`flex h-screen overflow-hidden bg-dark-bg text-slate-300`}>
-        {/* Sidebar - Glassy & Dark with Transition */}
+        {/* Sidebar - Narrower width (w-52) and tighter spacing */}
         <aside 
-          className={`${isCollapsed ? 'w-20' : 'w-64'} flex-shrink-0 flex flex-col border-r border-white/5 bg-dark-bg/50 backdrop-blur-sm z-20 transition-all duration-300 ease-in-out`}
+          className={`${isCollapsed ? 'w-20' : 'w-52'} flex-shrink-0 flex flex-col border-r border-white/5 bg-dark-bg/50 backdrop-blur-sm z-20 transition-all duration-300 ease-in-out`}
         >
           <div className="h-20 flex items-center px-0 justify-center relative">
             <div className={`${isCollapsed ? 'px-0' : 'px-6'} w-full transition-all`}>
                <Logo collapsed={isCollapsed} />
             </div>
-            {/* Collapse Toggle Button (Optional, for manual control) */}
+            {/* Collapse Toggle Button */}
             <button 
                 onClick={() => setCollapsed(!isCollapsed)}
                 className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-slate-800 border border-slate-700 rounded-full flex items-center justify-center text-slate-400 hover:text-white z-50 opacity-0 hover:opacity-100 transition-opacity"
@@ -79,14 +81,14 @@ export const Layout: React.FC<LayoutProps> = ({ children, darkMode, toggleDarkMo
             </button>
           </div>
 
-          <nav className="flex-1 overflow-y-auto py-6 overflow-x-hidden">
-            <ul className="space-y-2 px-3">
+          <nav className="flex-1 overflow-y-auto py-4 overflow-x-hidden">
+            <ul className="space-y-1 px-3">
               {navItems.map((item) => (
                 <li key={item.path}>
                   <Link
                     to={item.path}
                     className={`relative group flex items-center rounded-xl text-sm font-medium transition-all duration-300 overflow-hidden ${
-                      isCollapsed ? 'justify-center px-0 py-3' : 'px-4 py-3'
+                      isCollapsed ? 'justify-center px-0 py-3' : 'px-3 py-2.5'
                     } ${
                       isActive(item.path)
                         ? 'text-brand-400 bg-white/5 shadow-[0_0_20px_rgba(250,204,21,0.05)]'
@@ -95,7 +97,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, darkMode, toggleDarkMo
                     title={isCollapsed ? item.name : ''}
                   >
                     {isActive(item.path) && (
-                      <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-brand-400 rounded-r-full shadow-[0_0_10px_rgba(250,204,21,0.5)] transition-all ${isCollapsed ? 'h-5' : 'h-8'}`}></div>
+                      <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-brand-400 rounded-r-full shadow-[0_0_10px_rgba(250,204,21,0.5)] transition-all ${isCollapsed ? 'h-4' : 'h-6'}`}></div>
                     )}
                     
                     <span className={`transition-transform duration-300 ${
@@ -112,13 +114,13 @@ export const Layout: React.FC<LayoutProps> = ({ children, darkMode, toggleDarkMo
               ))}
             </ul>
             
-            <div className={`mt-8 px-8 text-xs font-bold text-slate-600 uppercase tracking-widest mb-4 transition-all ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>
+            <div className={`mt-6 px-6 text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-3 transition-all ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>
               System
             </div>
             <ul className="space-y-1 px-3">
                <li>
                   <a href="#" className={`flex items-center rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-colors ${
-                      isCollapsed ? 'justify-center px-0 py-3' : 'px-4 py-3'
+                      isCollapsed ? 'justify-center px-0 py-3' : 'px-3 py-2.5'
                   }`}>
                     <span className={`${!isCollapsed ? 'mr-3' : ''}`}><Settings size={20}/></span>
                     <span className={`whitespace-nowrap transition-all duration-300 ${isCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
@@ -132,16 +134,16 @@ export const Layout: React.FC<LayoutProps> = ({ children, darkMode, toggleDarkMo
           <div className={`p-4 mx-2 mb-4 rounded-2xl border transition-all duration-300 ${
               isCollapsed 
               ? 'bg-transparent border-transparent flex justify-center' 
-              : 'bg-gradient-to-br from-white/5 to-transparent border-white/5 mx-4'
+              : 'bg-gradient-to-br from-white/5 to-transparent border-white/5 mx-2'
           }`}>
             <div className="flex items-center">
               <div className="relative flex-shrink-0">
-                  <img src="https://picsum.photos/40/40?random=user" alt="User" className="w-10 h-10 rounded-full border border-white/10" />
-                  <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-dark-bg"></div>
+                  <img src="https://picsum.photos/40/40?random=user" alt="User" className="w-9 h-9 rounded-full border border-white/10" />
+                  <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-dark-bg"></div>
               </div>
               <div className={`ml-3 overflow-hidden transition-all duration-300 ${isCollapsed ? 'w-0 opacity-0 ml-0' : 'w-auto opacity-100'}`}>
                 <p className="text-sm font-bold text-slate-200 truncate">Admin User</p>
-                <p className="text-xs text-brand-400/80 truncate">设备部主管</p>
+                <p className="text-[10px] text-brand-400/80 truncate">设备部主管</p>
               </div>
             </div>
           </div>

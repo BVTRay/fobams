@@ -83,6 +83,29 @@ export interface AccountItem {
   auditLogs: AccountAuditLog[];
 }
 
+// --- Mobile Manager Types ---
+
+export interface SimCard {
+  id: string;
+  phoneNumber: string;
+  carrier: string; // 中国移动/联通/电信
+  status: 'Active' | 'Inactive';
+  owner: string; // current holder
+  iccid: string;
+}
+
+export interface MobileDevice {
+  id: string;
+  name: string; // iPhone 13
+  model: string;
+  os: string;
+  color: string;
+  screenLockPasscode: string; // The sensitive info
+  keeper: string; // Who has it
+  status: 'InUse' | 'Idle';
+  simCardId?: string; // Linked SIM
+}
+
 // --- Master Works Types ---
 
 export type VideoVariantType = 'Master' | 'Vertical' | 'Clean' | 'Social';

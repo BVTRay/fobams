@@ -8,6 +8,7 @@ import { CheckInOut } from './pages/CheckInOut';
 import { MediaIndex } from './pages/MediaIndex';
 import { AccountVault } from './pages/AccountVault';
 import { MasterWorks } from './pages/MasterWorks';
+import { MobileManager } from './pages/MobileManager';
 
 function App() {
   // Default to true for the dark theme request
@@ -36,6 +37,7 @@ function App() {
           <Route path="/media" element={<MediaIndex />} />
           <Route path="/master-works" element={<MasterWorks />} />
           <Route path="/accounts" element={<AccountVault />} />
+          <Route path="/mobile" element={<MobileManager />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>

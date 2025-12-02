@@ -5,9 +5,10 @@ import {
   Shield, Copy, Eye, EyeOff, Lock, Smartphone, Plus, 
   Server, Video, Box, CreditCard, History, X, 
   Key, ExternalLink, Search, Globe, Users, FileText, Check, Settings,
-  ShieldAlert, User, Trash2, Save
+  ShieldAlert, User, Trash2, Save, Unlock
 } from 'lucide-react';
 import { AccountItem, AccountCategory, AccountAuditLog } from '../types';
+import { MOCK_SIMS, MOCK_DEVICES } from './MobileManager';
 
 // Domain Mapping for logo lookup when URL is missing
 const PLATFORM_DOMAINS: Record<string, string> = {
@@ -596,13 +597,22 @@ const AccountFormModal = ({
                         <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 border-b border-white/5 pb-2">安全与关联</h3>
                         <div className="grid grid-cols-2 gap-4">
                              <div>
-                                <label className="block text-xs font-bold text-slate-400 mb-1.5">关联手机号</label>
-                                <input 
-                                    type="text" 
-                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500/50 outline-none font-mono"
-                                    value={formData.linkedPhone}
-                                    onChange={e => handleChange('linkedPhone', e.target.value)}
-                                />
+                                <label className="block text-xs font-bold text-slate-400 mb-1.5">关联手机号 (通讯库)</label>
+                                <div className="relative">
+                                    <Smartphone size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"/>
+                                    <select 
+                                        className="w-full bg-black/20 border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white focus:border-brand-500/50 outline-none appearance-none cursor-pointer font-mono"
+                                        value={formData.linkedPhone}
+                                        onChange={e => handleChange('linkedPhone', e.target.value)}
+                                    >
+                                        <option value="">未关联</option>
+                                        {MOCK_SIMS.map(sim => (
+                                            <option key={sim.id} value={sim.phoneNumber}>
+                                                {sim.phoneNumber} ({sim.owner} - {sim.carrier})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-xs font-bold text-slate-400 mb-1.5">关联邮箱</label>
@@ -684,6 +694,10 @@ const AccountFormModal = ({
 const DetailDrawer = ({ account, onClose, onEdit }: { account: AccountItem, onClose: () => void, onEdit: () => void }) => {
     const [revealPassword, setRevealPassword] = useState(false);
     const [countdown, setCountdown] = useState(0);
+
+    // Find linked SIM and Device
+    const linkedSim = MOCK_SIMS.find(s => s.phoneNumber === account.linkedPhone);
+    const linkedDevice = linkedSim ? MOCK_DEVICES.find(d => d.simCardId === linkedSim.id) : null;
 
     useEffect(() => {
         let interval: number;
@@ -808,9 +822,30 @@ const DetailDrawer = ({ account, onClose, onEdit }: { account: AccountItem, onCl
                             {/* Linked Contact Card */}
                             <div className="space-y-2">
                                 {account.linkedPhone && (
-                                    <div className="bg-black/20 rounded-lg p-3 flex items-center justify-between border border-white/5">
-                                        <div className="text-xs text-slate-400">关联手机</div>
-                                        <div className="text-sm font-bold text-slate-200 font-mono">{account.linkedPhone}</div>
+                                    <div className="bg-black/20 rounded-lg p-3 border border-white/5">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="text-xs text-slate-400">关联手机</div>
+                                            <div className="text-sm font-bold text-slate-200 font-mono">{account.linkedPhone}</div>
+                                        </div>
+                                        
+                                        {/* SMART LINKING FEATURE */}
+                                        {linkedDevice && (
+                                            <div className="mt-2 pt-2 border-t border-white/10">
+                                                <div className="flex justify-between items-center text-xs mb-1">
+                                                    <span className="text-slate-400">所在设备</span>
+                                                    <span className="text-white font-bold">{linkedDevice.name}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center bg-brand-900/40 rounded px-2 py-1 mt-1">
+                                                     <span className="text-[10px] text-brand-400 flex items-center">
+                                                         <Unlock size={10} className="mr-1"/> 锁屏密码
+                                                     </span>
+                                                     <span className="text-xs font-mono font-bold text-white tracking-widest">{linkedDevice.screenLockPasscode}</span>
+                                                </div>
+                                                <div className="text-[10px] text-slate-500 mt-1 text-right">
+                                                    保管人: {linkedDevice.keeper}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                                 {account.linkedEmail && (
