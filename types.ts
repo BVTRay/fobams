@@ -1,4 +1,5 @@
 
+
 export enum AssetStatus {
   Available = 'Available',
   Borrowed = 'Borrowed',
@@ -108,6 +109,47 @@ export interface MobileDevice {
 
 // --- Master Works Types ---
 
+export type SpaceType = 'Project' | 'Department' | 'Delivery';
+export type SpaceStatus = 'Active' | 'Archived';
+
+export interface MediaSpace {
+  id: string;
+  name: string;
+  description: string;
+  memberCount: number;
+  storageUsed: string; // "1.2 TB"
+  totalStorage: string; // "5 TB"
+  themeColor: string; // hex or tailwind class
+  // New Fields for Filtering/Sorting
+  type: SpaceType;
+  status: SpaceStatus;
+  createdAt: string; // ISO Date
+}
+
+export interface MediaFolder {
+  id: string;
+  spaceId: string; // NEW: Multi-tenant support
+  name: string;
+  parentId: string | null; // null for root
+  createdAt: string;
+}
+
+export interface ShareLinkRecord {
+  id: string;
+  spaceId: string; // NEW
+  workId: string;
+  workTitle: string;
+  workCover: string;
+  versionTag: string;
+  url: string; // generated short link
+  views: number;
+  downloads: number;
+  status: 'Active' | 'Expired';
+  createdAt: string;
+  expiresAt: string | null;
+  creator: string;
+}
+
 export type VideoVariantType = 'Master' | 'Vertical' | 'Clean' | 'Social';
 
 export interface VideoVariant {
@@ -115,8 +157,20 @@ export interface VideoVariant {
   type: VideoVariantType; // Main, 9:16, No Subtitle
   label: string; // "主文件 (16:9)", "抖音版 (9:16)"
   resolution: string; // "3840x2160", "1080x1920"
+  bitrate: string; // "12 Mbps"
+  codec: string; // "H.264"
   size: string; // "450 MB"
   downloadUrl?: string;
+}
+
+export interface Comment {
+    id: string;
+    userId: string;
+    userName: string;
+    userAvatar?: string;
+    content: string;
+    timestamp: string; // "10:23 AM"
+    timecode?: string; // "00:00:15"
 }
 
 export interface WorkVersion {
@@ -127,10 +181,13 @@ export interface WorkVersion {
   changeLog: string; // "Adjusted color grading"
   isCurrent: boolean;
   variants: VideoVariant[]; // Files associated with this version
+  comments?: Comment[]; // Comments specific to this version
 }
 
 export interface MasterWork {
   id: string;
+  spaceId: string; // NEW
+  folderId: string | null; // Directory belonging
   title: string;
   coverImage: string;
   duration: string;
@@ -147,4 +204,13 @@ export interface DashboardStat {
   value: string | number;
   trend?: string;
   trendUp?: boolean;
+}
+
+export interface Notification {
+  id: string;
+  type: 'info' | 'success' | 'warning' | 'error' | 'comment';
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
 }

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Smartphone, CreditCard as SimIcon, User, Signal, Wifi, Lock, Copy, Plus, Filter, Search } from 'lucide-react';
 import { SimCard, MobileDevice } from '../types';
@@ -123,9 +122,9 @@ export const MobileManager: React.FC = () => {
 
                                         <div className="mb-6">
                                             <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-1 font-bold">Mobile Number</div>
-                                            <div className="text-2xl font-mono font-bold text-white tracking-wider flex items-center gap-2 group-hover:text-brand-400 transition-colors">
+                                            <div className="text-2xl font-mono font-bold text-white tracking-wider flex items-center gap-2 group-hover:text-brand-400 transition-colors whitespace-nowrap">
                                                 {sim.phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1 $2 $3')}
-                                                <button className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-white/10 text-slate-400 transition-all">
+                                                <button className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-white/10 text-slate-400 transition-all flex-shrink-0">
                                                     <Copy size={14} />
                                                 </button>
                                             </div>
@@ -210,10 +209,10 @@ export const MobileManager: React.FC = () => {
 
                                         {linkedSim ? (
                                             <div className="bg-brand-500/10 rounded-xl p-3 border border-brand-500/10 flex items-center justify-between">
-                                                <div className="flex items-center text-xs text-brand-400/80">
+                                                <div className="flex items-center text-xs text-brand-400/80 flex-shrink-0">
                                                     <SimIcon size={14} className="mr-2"/> 本机号码
                                                 </div>
-                                                <div className="text-sm font-mono font-bold text-brand-400">
+                                                <div className="text-sm font-mono font-bold text-brand-400 whitespace-nowrap ml-2">
                                                     {linkedSim.phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1 $2 $3')}
                                                 </div>
                                             </div>

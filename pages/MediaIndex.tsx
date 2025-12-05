@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, HardDrive, FolderOpen, Hash, Cloud, MapPin, X, Copy, ArrowRight, Film } from 'lucide-react';
 import { MediaItem } from '../types';

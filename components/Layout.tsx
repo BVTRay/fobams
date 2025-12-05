@@ -1,21 +1,21 @@
-
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  Camera, 
-  ArrowLeftRight, 
   Database, 
   Shield, 
   Settings, 
   Moon, 
   Sun,
   Bell,
-  Search,
   Film,
   Menu,
-  Smartphone
+  Smartphone,
+  Check,
+  MessageSquare,
+  Info
 } from 'lucide-react';
+import { Notification } from '../types';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,6 +29,12 @@ export const LayoutContext = createContext({
   setCollapsed: (v: boolean) => {},
 });
 
+const MOCK_NOTIFICATIONS: Notification[] = [
+    { id: 'n1', type: 'comment', title: 'New Comment', message: 'Client A left a comment on "2024 Promo V1"', time: '10 mins ago', read: false },
+    { id: 'n2', type: 'success', title: 'Export Complete', message: 'Your video "Documentary_Final.mp4" is ready.', time: '1 hour ago', read: false },
+    { id: 'n3', type: 'info', title: 'System Update', message: 'FlickFlowDAM will undergo maintenance tonight.', time: '5 hours ago', read: true },
+];
+
 // Custom Logo Component
 const Logo = ({ collapsed }: { collapsed: boolean }) => (
   <div className={`flex items-center ${collapsed ? 'justify-center w-full' : 'gap-3'}`}>
@@ -39,8 +45,8 @@ const Logo = ({ collapsed }: { collapsed: boolean }) => (
        </svg>
     </div>
     <div className={`flex flex-col overflow-hidden transition-all duration-300 ${collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
-      <span className="text-lg font-bold text-slate-100 tracking-wide leading-none whitespace-nowrap">群鸟资管</span>
-      <span className="text-[0.6rem] font-bold text-brand-400 tracking-[0.2em] mt-1 whitespace-nowrap">FOBAMS</span>
+      <span className="text-lg font-bold text-slate-100 tracking-wide leading-none whitespace-nowrap">纷呈DAM</span>
+      <span className="text-[0.6rem] font-bold text-brand-400 tracking-normal mt-1 whitespace-nowrap origin-left">最懂传媒的数字资产管理</span>
     </div>
   </div>
 );
@@ -48,11 +54,29 @@ const Logo = ({ collapsed }: { collapsed: boolean }) => (
 export const Layout: React.FC<LayoutProps> = ({ children, darkMode, toggleDarkMode }) => {
   const location = useLocation();
   const [isCollapsed, setCollapsed] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const notifRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const markAllRead = () => {
+      setNotifications(prev => prev.map(n => ({...n, read: true})));
+  };
+
+  // Hidden Hardware and CheckInOut as requested
   const navItems = [
     { name: '工作台', path: '/', icon: <LayoutDashboard size={20} /> },
-    { name: '硬件资产', path: '/hardware', icon: <Camera size={20} /> },
-    { name: '借还管理', path: '/check-in-out', icon: <ArrowLeftRight size={20} /> },
     { name: '通讯设备', path: '/mobile', icon: <Smartphone size={20} /> },
     { name: '媒资索引', path: '/media', icon: <Database size={20} /> },
     { name: '成片管理', path: '/master-works', icon: <Film size={20} /> }, 
@@ -113,27 +137,11 @@ export const Layout: React.FC<LayoutProps> = ({ children, darkMode, toggleDarkMo
                 </li>
               ))}
             </ul>
-            
-            <div className={`mt-6 px-6 text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-3 transition-all ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>
-              System
-            </div>
-            <ul className="space-y-1 px-3">
-               <li>
-                  <a href="#" className={`flex items-center rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-colors ${
-                      isCollapsed ? 'justify-center px-0 py-3' : 'px-3 py-2.5'
-                  }`}>
-                    <span className={`${!isCollapsed ? 'mr-3' : ''}`}><Settings size={20}/></span>
-                    <span className={`whitespace-nowrap transition-all duration-300 ${isCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
-                        系统设置
-                    </span>
-                  </a>
-               </li>
-            </ul>
           </nav>
 
-          <div className={`p-4 mx-2 mb-4 rounded-2xl border transition-all duration-300 ${
+          <button className={`p-4 mx-2 mb-4 rounded-2xl border transition-all duration-300 text-left w-[calc(100%-1rem)] hover:bg-white/10 hover:border-white/20 cursor-pointer group ${
               isCollapsed 
-              ? 'bg-transparent border-transparent flex justify-center' 
+              ? 'bg-transparent border-transparent flex justify-center px-0 mx-0 w-full' 
               : 'bg-gradient-to-br from-white/5 to-transparent border-white/5 mx-2'
           }`}>
             <div className="flex items-center">
@@ -142,11 +150,11 @@ export const Layout: React.FC<LayoutProps> = ({ children, darkMode, toggleDarkMo
                   <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-dark-bg"></div>
               </div>
               <div className={`ml-3 overflow-hidden transition-all duration-300 ${isCollapsed ? 'w-0 opacity-0 ml-0' : 'w-auto opacity-100'}`}>
-                <p className="text-sm font-bold text-slate-200 truncate">Admin User</p>
-                <p className="text-[10px] text-brand-400/80 truncate">设备部主管</p>
+                <p className="text-sm font-bold text-slate-200 truncate group-hover:text-white transition-colors">Admin User</p>
+                <p className="text-[10px] text-brand-400/80 truncate">个人设置</p>
               </div>
             </div>
-          </div>
+          </button>
         </aside>
 
         {/* Main Content */}
@@ -162,10 +170,53 @@ export const Layout: React.FC<LayoutProps> = ({ children, darkMode, toggleDarkMo
             </div>
             
             <div className="flex items-center space-x-4">
-              <button className="p-2.5 text-slate-400 hover:text-slate-100 hover:bg-white/5 rounded-full relative transition-colors">
-                <Bell size={20} />
-                <span className="absolute top-2 right-2.5 w-2 h-2 bg-brand-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(234,179,8,0.6)]"></span>
+              <button className="p-2.5 text-slate-400 hover:text-slate-100 hover:bg-white/5 rounded-full transition-colors" title="系统设置">
+                <Settings size={20} />
               </button>
+
+              <div className="relative" ref={notifRef}>
+                  <button 
+                    onClick={() => setShowNotifications(!showNotifications)}
+                    className="p-2.5 text-slate-400 hover:text-slate-100 hover:bg-white/5 rounded-full relative transition-colors"
+                  >
+                    <Bell size={20} />
+                    {unreadCount > 0 && (
+                        <span className="absolute top-2 right-2.5 w-2 h-2 bg-brand-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(234,179,8,0.6)]"></span>
+                    )}
+                  </button>
+
+                  {/* Notification Dropdown */}
+                  {showNotifications && (
+                      <div className="absolute right-0 top-full mt-2 w-80 bg-[#1e293b] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[100] animate-in slide-in-from-top-2 fade-in duration-200">
+                          <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#0f172a]">
+                              <h3 className="font-bold text-white text-sm">Notifications</h3>
+                              <button onClick={markAllRead} className="text-[10px] text-brand-400 hover:text-brand-300">Mark all read</button>
+                          </div>
+                          <div className="max-h-80 overflow-y-auto">
+                              {notifications.length === 0 ? (
+                                  <div className="p-6 text-center text-slate-500 text-xs">No notifications</div>
+                              ) : (
+                                  notifications.map(n => (
+                                      <div key={n.id} className={`p-4 border-b border-white/5 hover:bg-white/5 transition-colors flex gap-3 ${!n.read ? 'bg-white/[0.02]' : ''}`}>
+                                          <div className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${!n.read ? 'bg-brand-500' : 'bg-transparent'}`}></div>
+                                          <div>
+                                              <div className="flex items-center gap-2 mb-1">
+                                                  {n.type === 'comment' && <MessageSquare size={12} className="text-blue-400"/>}
+                                                  {n.type === 'success' && <Check size={12} className="text-green-400"/>}
+                                                  {n.type === 'info' && <Info size={12} className="text-slate-400"/>}
+                                                  <span className="text-xs font-bold text-slate-200">{n.title}</span>
+                                              </div>
+                                              <p className="text-xs text-slate-400 leading-relaxed">{n.message}</p>
+                                              <span className="text-[10px] text-slate-600 mt-1 block">{n.time}</span>
+                                          </div>
+                                      </div>
+                                  ))
+                              )}
+                          </div>
+                      </div>
+                  )}
+              </div>
+
               <button 
                 onClick={toggleDarkMode}
                 className="p-2.5 text-slate-400 hover:text-brand-400 hover:bg-white/5 rounded-full transition-colors"
