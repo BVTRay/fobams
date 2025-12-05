@@ -45,7 +45,7 @@ const Logo = ({ collapsed }: { collapsed: boolean }) => (
        </svg>
     </div>
     <div className={`flex flex-col overflow-hidden transition-all duration-300 ${collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
-      <span className="text-lg font-bold text-slate-100 tracking-wide leading-none whitespace-nowrap">纷呈DAM</span>
+      <span className="text-lg font-bold text-slate-100 tracking-wide leading-none whitespace-nowrap">群鸟DAM</span>
       <span className="text-[0.6rem] font-bold text-brand-400 tracking-normal mt-1 whitespace-nowrap origin-left">最懂传媒的数字资产管理</span>
     </div>
   </div>

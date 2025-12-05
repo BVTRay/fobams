@@ -228,7 +228,16 @@ const Toast = ({ message, type, onClose }: { message: string, type: 'success' | 
 
 // --- HELPER COMPONENTS ---
 
-const SidebarItem = ({ icon, label, active, onClick, badge, badgeColor = 'brand' }: { icon: React.ReactNode, label: string, active?: boolean, onClick?: () => void, badge?: string, badgeColor?: string }) => (
+interface SidebarItemProps {
+    icon: React.ReactNode;
+    label: string;
+    active?: boolean;
+    onClick?: () => void;
+    badge?: string;
+    badgeColor?: string;
+}
+
+const SidebarItem: React.FC<SidebarItemProps> = ({ icon, label, active, onClick, badge, badgeColor = 'brand' }) => (
     <div 
         onClick={onClick}
         className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all group select-none ${
@@ -251,7 +260,13 @@ const SidebarItem = ({ icon, label, active, onClick, badge, badgeColor = 'brand'
     </div>
 );
 
-const FolderCard = ({ folder, settings, onDoubleClick }: { folder: MediaFolder, settings: ViewSettings, onDoubleClick: () => void }) => (
+interface FolderCardProps {
+    folder: MediaFolder;
+    settings: ViewSettings;
+    onDoubleClick: () => void;
+}
+
+const FolderCard: React.FC<FolderCardProps> = ({ folder, settings, onDoubleClick }) => (
     <div 
         onDoubleClick={onDoubleClick}
         className={`bg-[#1e293b] border border-white/5 rounded-xl hover:border-brand-500/30 transition-all cursor-pointer group flex flex-col relative overflow-hidden ${
@@ -270,7 +285,14 @@ const FolderCard = ({ folder, settings, onDoubleClick }: { folder: MediaFolder, 
     </div>
 );
 
-const FileCard = ({ work, settings, onDoubleClick, onShare }: { work: MasterWork, settings: ViewSettings, onDoubleClick: (e: React.MouseEvent) => void, onShare: () => void }) => {
+interface FileCardProps {
+    work: MasterWork;
+    settings: ViewSettings;
+    onDoubleClick: (e: React.MouseEvent) => void;
+    onShare: () => void;
+}
+
+const FileCard: React.FC<FileCardProps> = ({ work, settings, onDoubleClick, onShare }) => {
     let aspectClass = 'aspect-video';
     if (settings.aspectRatio === '1:1') aspectClass = 'aspect-square';
     if (settings.aspectRatio === '9:16') aspectClass = 'aspect-[9/16]';
